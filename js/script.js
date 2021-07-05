@@ -15,6 +15,7 @@ otherJobRole.style.display = "none";
 
 // T-Shirt color and design selection Element
 const color = document.querySelector('#color');
+const colorOption = color.children;
 color.setAttribute('disabled', '');
 const design = document.querySelector('#design');
 
@@ -26,12 +27,12 @@ const checkBoxes = document.querySelectorAll('input[type="checkbox"]');
 const paymentOption = document.querySelector('#payment');
 const paymentChildren = paymentOption.children[1];
 paymentChildren.setAttribute('selected', '');
+
 const creditCard = document.querySelector('#credit-card');
 const payPal = document.querySelector('#paypal')
 payPal.hidden = true;
 const bitCoin = document.querySelector('#bitcoin');
 bitCoin.hidden = true;
-
 
 // function for user job role selection
 function jobRoleSelection(e){
@@ -43,15 +44,16 @@ function jobRoleSelection(e){
 // function for T-shirt and color selection;
 function shirtDesign(e){
   color.removeAttribute('disabled');
-  const designValue = e.target.value;
-  for(let i = 0; i < color.length; i++){
-      const currentColor = color[i];
-      const currentTheme = color[i].dataset.theme;
-      if(designValue !== currentTheme){
-          currentColor.hidden = true;
-      }else{
+  for(let i = 0; i < colorOption.length; i++){
+      const currentColor = colorOption[i];
+      const currentTheme = currentColor.dataset.theme;
+      const designValue = e.target.value;
+      if(designValue === currentTheme){
           currentColor.hidden = false;
-          
+          currentColor.setAttribute('selected', '');
+      }else{
+          currentColor.hidden = true;
+          currentColor.removeAttribute('selected');  
       }
   }
 
@@ -63,11 +65,12 @@ function paymentActivites(e){
     const target = e.target
     const payment = document.querySelector('#activities-cost');
     let total = 0;
-    const justClicked = target.dataset.dayAndTime;
+    
      for(let i = 0; i < checkBoxes.length; i++){
          const currentCheckbox = checkBoxes[i].dataset.dayAndTime;
+         const justClicked = target.dataset.dayAndTime;
          if(currentCheckbox === justClicked && target !== checkBoxes[i]){
-             checkBoxes[i].disabled = true;
+             checkBoxes[i].disabled = true; 
          }else{
              checkBoxes[i].disabled = false;
          }
@@ -83,6 +86,7 @@ function paymentActivites(e){
 
 // function for payment method options
 function paymentMethodOption(e){
+    paymentChildren.removeAttribute('selected');
     const paymentMethod = e.target.value;
     if(paymentMethod === payPal.id){
         payPal.hidden = false; 
@@ -110,6 +114,9 @@ function nameValidation(){
     if(!regex){
         label.classList.add('not-valid');
         span.classList.remove('hint');
+    }else{
+        label.classList.remove('not-valid');
+        span.classList.add('hint');
     }
     return regex;
 }
@@ -122,6 +129,9 @@ function userEmailValidation(){
     if(!regex){
         label.classList.add('not-valid');
         span.classList.remove('hint');
+    }else{
+        label.classList.remove('not-valid');
+        span.classList.add('hint');
     }
   
     return regex;
@@ -136,9 +146,13 @@ function userCardValidation(){
     if(!regex){
         label.classList.add('not-valid');
         span.classList.remove('hint');
+    }else{
+        label.classList.remove('not-valid');
+        span.classList.add('hint');
     }
     return regex;
 }
+
 // function for user zip code validation;
 function zipCodeValidation(){
     let zipValue = zipCode.value;
@@ -149,6 +163,9 @@ function zipCodeValidation(){
     if(!regex){
         label.classList.add('not-valid');
         span.classList.remove('hint');
+    }else{
+        label.classList.remove('not-valid');
+        span.classList.add('hint');
     }
     return regex;
 }
@@ -164,6 +181,9 @@ function cvvCardValidation(){
     if(!regex){
         label.classList.add('not-valid');
         span.classList.remove('hint');  
+    }else{
+        label.classList.remove('not-valid');
+        span.classList.add('hint');
     }
    
     return regex; 
@@ -183,8 +203,10 @@ function activitiesValid(){
     
 }
 
+
 // function to verify all feild;
 function eventValidation(e){
+    
     if(!nameValidation()){
         e.preventDefault();
     }
@@ -194,33 +216,35 @@ function eventValidation(e){
 
     if(!activitiesValid()){
         e.preventDefault();
-    }
-    Array.from(paymentOption).forEach(card => {
-        if(card.value === "credit-card"){
-            if(!userCardValidation()){
-                e.preventDefault();
-            }
-            if(!zipCodeValidation()){
-                e.preventDefault();
-            }
-            if(!cvvCardValidation()){
-                e.preventDefault();
-            }
-
-        }
-             
-    })
+     }
+     if(creditCard.hidden === false){
+         if(!userCardValidation()){
+             e.preventDefault();
+         }
+         if(!zipCodeValidation()){
+             e.preventDefault();
+         }
+         if(!cvvCardValidation()){
+             e.preventDefault();
+         }
+     }
+    
 
 }
 
 // adding toggling focus event;
 for(let i = 0; i < checkBoxes.length; i++){
+   
     const box = checkBoxes[i];
     box.addEventListener('focus', e => {
         box.parentElement.classList.add('focus');
     })
     box.addEventListener('blur', e => {
-        box.parentElement.classList.remove('focus');
+        const active = document.querySelector('.focus');
+        if(active){
+            active.classList.remove('focus');
+
+        }
     })
 }
 
@@ -233,4 +257,9 @@ design.addEventListener('change', shirtDesign);
 registerActivities.addEventListener('change', paymentActivites);
 
 paymentOption.addEventListener('change', paymentMethodOption)
+
+
+
+
+
 
