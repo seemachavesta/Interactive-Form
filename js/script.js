@@ -106,91 +106,42 @@ function paymentMethodOption(e){
     
 }
 // function for name value validation;
-function nameValidation(){    
-    const nameValue = userName.value;
-    const label = userName.parentElement;
-    const span = userName.nextElementSibling;
-    const regex = /^[a-z0-9]{2,20}$|[a-z0-9]\s[a-z]{1,20}$/ig.test(nameValue);
-    if(!regex){
-        label.classList.add('not-valid');
-        span.classList.remove('hint');
-    }else{
-        label.classList.remove('not-valid');
-        span.classList.add('hint');
-    }
+function nameValidation(name){    
+    const regex = /^[a-z0-9]{2,20} ?$|[a-z0-9]\s[a-z]{1,20}$/ig.test(name.value);
     return regex;
 }
+
 // function for user Email validation;
-function userEmailValidation(){
-    const useremail = email.value;
-    const span = email.nextElementSibling;
-    const label = email.parentElement;
-    const regex = /^[^@]+@[^@.]+\.[a-z]+$/i.test(useremail);
-    if(!regex){
-        label.classList.add('not-valid');
-        span.classList.remove('hint');
-    }else{
-        label.classList.remove('not-valid');
-        span.classList.add('hint');
-    }
-  
+function userEmailValidation(email){
+    const regex = /^[^@]+@[^@.]+\.[a-z]+$/i.test(email.value);
     return regex;
 }
+
 // function for credit card validtion;
-function userCardValidation(){
-    let cardValue = cardNumber.value;
-    const label = cardNumber.parentElement;
-    const span = cardNumber.nextElementSibling;
+function userCardValidation(card){
+    let cardValue = card.value;
     cardValue = parseInt(cardValue);
     const regex = /^\d{13,16}$/.test(cardValue);
-    if(!regex){
-        label.classList.add('not-valid');
-        span.classList.remove('hint');
-    }else{
-        label.classList.remove('not-valid');
-        span.classList.add('hint');
-    }
     return regex;
 }
 
 // function for user zip code validation;
-function zipCodeValidation(){
-    let zipValue = zipCode.value;
-    const label = zipCode.parentElement;
-    const span = zipCode.nextElementSibling;
+function zipCodeValidation(zip){
+    let zipValue = zip.value;
     zipValue = parseInt(zipValue);
     const regex = /^\d{5}$/.test(zipValue);
-    if(!regex){
-        label.classList.add('not-valid');
-        span.classList.remove('hint');
-    }else{
-        label.classList.remove('not-valid');
-        span.classList.add('hint');
-    }
     return regex;
 }
 
 // credit card cvv validation;
-function cvvCardValidation(){
+function cvvCardValidation(cvv){
     let card = cvv.value;
      card = parseInt(card);
-    const label = cvv.parentElement;
-    const span = cvv.nextElementSibling;
-    const regex = /^\d{3}$/.test(card);
-    
-    if(!regex){
-        label.classList.add('not-valid');
-        span.classList.remove('hint');  
-    }else{
-        label.classList.remove('not-valid');
-        span.classList.add('hint');
-    }
-   
-    return regex; 
-      
+     const regex = /^\d{3}$/.test(card);
+     return regex;   
 }
 
-
+// function for activities register validation;
 function activitiesValid(){
     const activites = document.querySelector('#activities');
     const label = activites.firstElementChild;
@@ -203,14 +154,66 @@ function activitiesValid(){
     
 }
 
+// function for error message display;
+function addErrorMessage(e){
+    const label = e.parentElement;
+    const span = e.nextElementSibling;
+    label.classList.add('not-valid');
+    span.classList.remove('hint');
+}
+
+// Remove error messesge;
+function removeError(e){
+    const label = e.parentElement;
+    const span = e.nextElementSibling;
+    label.classList.remove('not-valid');
+    span.classList.add('hint');
+}
+
+// function for name message for name field;
+function nameError(){
+    const nameValue = userName.value;
+    if(nameValue === '' || nameValue === null){
+        addErrorMessage(userName);
+    }else{
+        removeError(userName);
+    }
+}
+
+// condational error message for email field;
+function emailError(){
+    const emailValue = email.value;
+    let span = email.nextElementSibling;
+    const label = email.parentElement
+    label.classList.add('not-valid');
+    span.classList.remove('hint');
+    if(emailValue === '' || emailValue === null){
+        span.textContent = 'Email field cannot be blank';
+    }else if(!userEmailValidation(email)){
+        span.textContent = 'Email address must be formatted correctly';
+    }else{
+        removeError(email);
+    }
+}
+
+form.addEventListener('keyup', (e) => {
+    if(e.target.id === 'name'){
+        nameError();
+    }
+    if(e.target.id === 'email'){
+        emailError();
+    }
+})
 
 // function to verify all feild;
 function eventValidation(e){
     
-    if(!nameValidation()){
+    if(!nameValidation(userName)){
+        addErrorMessage(userName);
         e.preventDefault();
     }
-    if(!userEmailValidation()){
+    if(!userEmailValidation(email)){
+        addErrorMessage(email);
         e.preventDefault();
     }
 
@@ -218,13 +221,16 @@ function eventValidation(e){
         e.preventDefault();
      }
      if(creditCard.hidden === false){
-         if(!userCardValidation()){
+         if(!userCardValidation(cardNumber)){
+             addErrorMessage(cardNumber);
              e.preventDefault();
          }
-         if(!zipCodeValidation()){
+         if(!zipCodeValidation(zipCode)){
+             addErrorMessage(zipCode);
              e.preventDefault();
          }
-         if(!cvvCardValidation()){
+         if(!cvvCardValidation(cvv)){
+             addErrorMessage(cvv);
              e.preventDefault();
          }
      }
@@ -234,7 +240,6 @@ function eventValidation(e){
 
 // adding toggling focus event;
 for(let i = 0; i < checkBoxes.length; i++){
-   
     const box = checkBoxes[i];
     box.addEventListener('focus', e => {
         box.parentElement.classList.add('focus');
@@ -257,6 +262,7 @@ design.addEventListener('change', shirtDesign);
 registerActivities.addEventListener('change', paymentActivites);
 
 paymentOption.addEventListener('change', paymentMethodOption)
+
 
 
 
